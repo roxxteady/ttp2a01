@@ -10,8 +10,8 @@ public final class World {
 	public int BLOCKSINX = 1;
 	public int BLOCKSINY = 1;
 	public int ROXELSIZE = 16;
-	public int WIDTH = 20;
-	public int HEIGHT = 20;
+	public int WIDTH = 34;
+	public int HEIGHT = 34;
 	public Integer ssn;
 	
 	public World(){

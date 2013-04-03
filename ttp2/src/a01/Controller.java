@@ -17,53 +17,34 @@ public class Controller extends JGEngine {
 	
 	private static final long serialVersionUID = 1L;
 	public MyObject player;
-	private GigaSpace gt;
-	private World current;
-	
-	public static void main(String [] args) {
-		new Controller(new JGPoint(800,800));
-	}
+	private World world;
 
 	/** Application constructor. */
-	public Controller(JGPoint size) { 
-		initGigaspace();
-		initEngine(size.x,size.y); 
-		}
+	public Controller(JGPoint size) {
+		world = GSSal.getWorld();
+		if (world != null)
+			initEngine(size.x,size.y); 		
+	}
 
 	/** Applet constructor. */
 	public Controller() {
-		initGigaspace();
 		initEngineApplet();
-	}
-
-	private void initGigaspace() {
-		gt = DataGridConnectionUtility.getSpace("MySpace",1,1);
-		current= gt.readById(World.class, 1);
 	}
 
 	public void initCanvas() {
 		// we set the background colour to same colour as the splash background
-		setCanvasSettings(current.WIDTH,current.HEIGHT,current.ROXELSIZE,current.ROXELSIZE,JGColor.black,new JGColor(255,246,199),null);
+		setCanvasSettings(world.WIDTH,world.HEIGHT,world.ROXELSIZE,world.ROXELSIZE,JGColor.black,new JGColor(255,255,255),null);
 	}
 
 	public void initGame() {
 		setFrameRate(10,2);
 		defineMedia("example3.tbl");
-		//setBGImage("mybackground");
-		// create some game objects
-		//for (int i=0; i<1; i++)
-		//	new MyObject();
-		myo = new MyObject[4];
-		myo[0] = new MyObject(96,0,0,2);
-		myo[1] = new MyObject(208,0,0,1.2);
-		myo[2] = new MyObject(0,96,0.4,0);
-		myo[3] = new MyObject(0,208,1,0);
 	
 		// create some tiles. "#" is our marble tile, "." is an empty space.
 		
-		for(int tx = 0; tx < (current.WIDTH+1)/7; ++tx)
+		for(int tx = 0; tx < (world.WIDTH+1)/7; ++tx)
 		{
-			for(int ty = 0; ty < (current.HEIGHT+1)/7; ++ty)
+			for(int ty = 0; ty < (world.HEIGHT+1)/7; ++ty)
 			{
 				setTiles(
 					tx*7, // tile x index
@@ -88,32 +69,19 @@ public class Controller extends JGEngine {
 			0    // which cids to preserve when setting a tile (not used here).
 		);
 	}
-
-	public void beginThatShit()
-	{
-		this.removeObject(myo[0]);
-		this.removeObject(myo[1]);
-		this.removeObject(myo[2]);
-		this.removeObject(myo[3]);
-		myo[0] = new MyObject(96,0,0,random(0.5, 3));
-		myo[1] = new MyObject(208,0,0,random(0.5, 3));
-		myo[2] = new MyObject(0,96,random(0.5, 3),0);
-		myo[3] = new MyObject(0,208,random(0.5, 3),0);
-	}
 	
 	public void doFrame() {
-		if (getKey(KeyEnter)) beginThatShit();
 		moveObjects(null,0);
 		// check object-object collision
-		checkCollision(
-			1, // cids of objects that our objects should collide with
-			1  // cids of the objects whose hit() should be called
-		);
-		// check object-tile collision
-		checkBGCollision(
-			1+2, // collide with the marble and border tiles
-			1    // cids of our objects
-		);
+//		checkCollision(
+//			1, // cids of objects that our objects should collide with
+//			1  // cids of the objects whose hit() should be called
+//		);
+//		// check object-tile collision
+//		checkBGCollision(
+//			1+2, // collide with the marble and border tiles
+//			1    // cids of our objects
+//		);
 	}
 
 	/** Our user-defined object, which now bounces off other object and tiles.*/
