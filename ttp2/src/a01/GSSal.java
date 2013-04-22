@@ -1,7 +1,6 @@
 package a01;
 
 import org.openspaces.core.GigaSpace;
-
 import com.j_spaces.core.client.SQLQuery;
 
 public class GSSal {
@@ -28,8 +27,22 @@ public class GSSal {
 		gt.write(world);
 	}
 	
-	public static void moveCar(int x, int y, int tx, int ty){
-		gt.take(new SQLQuery<Roxel>(Roxel.class, "x=" + tx + " and y=" + ty + " and free=true"));
-		gt.take(new SQLQuery<Roxel>(Roxel.class, "x=" + x + " and y=" + y));
+	public static boolean moveCar(int x, int y, int tx, int ty){
+	
+		if(gt.take(new SQLQuery<Roxel>(Roxel.class, "x=" + tx + " and y=" + ty + " and free=true")) == null) {
+			return false;
+		}
+		
+		GSSal.setRoxel(x, y, Direction.north2South);
+		
+//		if(gt.take(new SQLQuery<Roxel>(Roxel.class, "x=" + x + " and y=" + y)) == null) {
+//			return false;
+//		}
+		return true;
 	}
+	
+	public static void setRoxel(int x, int y, Direction dir) {
+		gt.write(new Roxel(x, y, dir, true));
+	}
+	
 }

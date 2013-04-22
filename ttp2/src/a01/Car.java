@@ -1,18 +1,18 @@
 package a01;
 
-import com.gigaspaces.admin.cli.GS;
+import java.awt.Point;
 
 public class Car {
 
 	private Direction dir;
 	private double speed;
-	private int x;
-	private int y;
+	private int srcx;
+	private int srcy;
 
-	public Car(Direction dir, double speed, int x, int y) {
+	public Car(Direction dir, double speed, int x, int y) throws CarSpawnException {
 		this.dir = dir;
 		this.speed = speed;
-		spawn(x, y);
+		this.spawn(x, y);
 	}
 
 	public Direction getDir() {
@@ -23,15 +23,23 @@ public class Car {
 		this.dir = dir;
 	}
 
-	public void spawn(int x, int y) {
-		this.x = x;
-		this.y = y;
+	private void spawn(int x, int y) throws CarSpawnException {
+		if (!GSSal.moveCar(0, 0, x, y)) {
+			throw new CarSpawnException();
+		}
+		this.srcx = x;
+		this.srcy = y;
 	}
 
-	public void move() {
-		int tx = (dir == Direction.west2East) ? x + 1 : x;
-		int ty = (dir == Direction.north2South) ? y + 1 : y;
-		GSSal.moveCar(x, y, tx, ty);
+	public void move(int destx, int desty) throws CarMoveException {
+//		destx = (dir == Direction.west2East) ? srcx + 1 : srcx;
+//		desty = (dir == Direction.north2South) ? srcy + 1 : srcy;
+		if (!GSSal.moveCar(srcx, srcy, destx, desty)) {
+			throw new CarMoveException();
+		}
+		srcx = destx;
+		srcy = desty;
+		System.out.println(srcx + "-" + srcy + "-" + destx + "-" + desty + "-" + speed);
 	}
 
 	public double getSpeed() {
@@ -42,4 +50,32 @@ public class Car {
 		this.speed = speed;
 	}
 
+	public Point getPosition() {
+		return new Point(this.srcx, this.srcy);
+	}
+	
+	class CarSpawnException extends Exception {
+
+		private static final long serialVersionUID = 1L;
+		
+		@Override
+		public void printStackTrace() {
+			super.printStackTrace();
+			System.err.println("Can't spawn the Car!");
+		}
+		
+	}
+	
+	class CarMoveException extends Exception {
+
+		private static final long serialVersionUID = 1L;
+		
+		@Override
+		public void printStackTrace() {
+			super.printStackTrace();
+			System.err.println("Can't move the Car!");
+		}
+		
+	}
+	
 }

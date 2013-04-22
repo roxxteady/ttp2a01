@@ -28,7 +28,6 @@ public class Roxel {
 	}
 
 	public void setSsn(int ssn) {
-		System.out.println(ssn);
 		this.ssn = ssn;
 	}
 
