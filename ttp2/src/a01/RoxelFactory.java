@@ -23,6 +23,7 @@ public class RoxelFactory {
 						listOfRoxels.add(new Roxel(x,y,Direction.toBeDefined,true));
 					x++;
 				}
+//				System.out.println("RoxelFactory:" + x + "-" + y);
 			}
 		}
 		return listOfRoxels;

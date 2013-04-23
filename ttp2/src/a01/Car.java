@@ -12,7 +12,8 @@ public class Car {
 	public Car(Direction dir, double speed, int x, int y) throws CarSpawnException {
 		this.dir = dir;
 		this.speed = speed;
-		this.spawn(x, y);
+		this.srcx = x;
+		this.srcy = y;
 	}
 
 	public Direction getDir() {
@@ -23,14 +24,6 @@ public class Car {
 		this.dir = dir;
 	}
 
-	private void spawn(int x, int y) throws CarSpawnException {
-		if (!GSSal.moveCar(0, 0, x, y)) {
-			throw new CarSpawnException();
-		}
-		this.srcx = x;
-		this.srcy = y;
-	}
-
 	public void move(int destx, int desty) throws CarMoveException {
 //		destx = (dir == Direction.west2East) ? srcx + 1 : srcx;
 //		desty = (dir == Direction.north2South) ? srcy + 1 : srcy;
@@ -39,7 +32,7 @@ public class Car {
 		}
 		srcx = destx;
 		srcy = desty;
-		System.out.println(srcx + "-" + srcy + "-" + destx + "-" + desty + "-" + speed);
+//		System.out.println(srcx + "-" + srcy + "-" + destx + "-" + desty + "-" + speed);
 	}
 
 	public double getSpeed() {
