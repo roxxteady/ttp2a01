@@ -46,10 +46,10 @@ public class CarThread implements Runnable {
 				Thread.sleep((long) ((1/this.car.getSpeed()) * 10000));
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+//				e.printStackTrace();
 			} catch (CarMoveException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+//				e.printStackTrace();
 			}
 		}
 	}

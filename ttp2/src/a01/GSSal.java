@@ -35,11 +35,21 @@ public class GSSal {
 		Roxel roxelSrc;
 		Roxel roxelDst;
 		
-		if((roxelDst = gt.take(new SQLQuery<Roxel>(Roxel.class, "x=" + tx + " and y=" + ty + " and free=true"))) == null) {
+//		System.out.println(x + "-" + y + "-" + tx + "-" + ty);
+		
+		if ((roxelDst = gt.take(new SQLQuery<Roxel>(Roxel.class, "x=" + tx + " and y=" + ty + " and free=true"))) == null) {
 			return false;
 		}
 		
-		if((roxelSrc = gt.take(new SQLQuery<Roxel>(Roxel.class, "x=" + x + " and y=" + y + " and free=false"))) == null) {
+		if (roxelDst.getDir() == Direction.north2South && y == ty) {
+			gt.write(roxelDst);
+			return false;
+		} else if (roxelDst.getDir() == Direction.west2East && x == tx) {
+			gt.write(roxelDst);
+			return false;
+		}
+		
+		if ((roxelSrc = gt.take(new SQLQuery<Roxel>(Roxel.class, "x=" + x + " and y=" + y + " and free=false"))) == null) {
 			gt.write(roxelDst);
 			return false;
 		}
@@ -58,11 +68,33 @@ public class GSSal {
 		}
 	}
 	
+	public static boolean resetRoxel(int x, int y, boolean free, Direction dir) {
+		Roxel roxel;
+		if((roxel = gt.take(new SQLQuery<Roxel>(Roxel.class, "x=" + x + " and y=" + y + " and free=true"))) == null) {
+			return false;
+		}
+		
+		roxel.setFree(free);
+		roxel.setDir(dir);
+		gt.write(roxel);
+		
+		return true;
+	}
+	
+	public static Roxel getRoxel(int x, int y) throws GetRoxelException {
+		Roxel roxel;
+		if((roxel = gt.read(new SQLQuery<Roxel>(Roxel.class, "x=" + x + " and y=" + y))) == null) {
+			throw new GetRoxelException();
+		}
+		
+		return roxel;
+	}
+	
 	public static boolean setCar(Car car) {
 		Roxel roxelDst;
 		Point carPos = car.getPosition();
 		
-		if((roxelDst = gt.take(new SQLQuery<Roxel>(Roxel.class, "x=" + (int) carPos.getX() + " and y=" + (int) carPos.getY() + " and free=true"))) == null) {
+		if((roxelDst = gt.take(new SQLQuery<Roxel>(Roxel.class, "x=" + carPos.x + " and y=" + carPos.y + " and free=true"))) == null) {
 			return false;
 		}
 		

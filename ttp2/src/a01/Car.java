@@ -9,7 +9,7 @@ public class Car {
 	private int srcx;
 	private int srcy;
 
-	public Car(Direction dir, double speed, int x, int y) throws CarSpawnException {
+	public Car(Direction dir, double speed, int x, int y) {
 		this.dir = dir;
 		this.speed = speed;
 		this.srcx = x;

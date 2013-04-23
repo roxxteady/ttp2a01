@@ -13,17 +13,16 @@ public class RoxelFactory {
 			for (int x = 0; x < world.WIDTH;) {
 				if ((y + 1) % 7 == 0 && y != 0)
 				{
-					listOfRoxels.add(new Roxel(x,y,Direction.toBeDefined,true));
+					listOfRoxels.add(new Roxel(x,y,Direction.west2East,true));
 					x++;
 				}
 				else
 				{
 					x += 6;
 					if (x < world.WIDTH) 
-						listOfRoxels.add(new Roxel(x,y,Direction.toBeDefined,true));
+						listOfRoxels.add(new Roxel(x,y,Direction.north2South,true));
 					x++;
 				}
-//				System.out.println("RoxelFactory:" + x + "-" + y);
 			}
 		}
 		return listOfRoxels;

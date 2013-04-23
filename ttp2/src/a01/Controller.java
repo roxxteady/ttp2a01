@@ -4,7 +4,6 @@ import jgame.JGColor;
 import jgame.JGObject;
 import jgame.JGPoint;
 import jgame.platform.JGEngine;
-import a01.Car.CarSpawnException;
 
 /** Tutorial example 4: tiles and collision.  Like example 3, only the
  * pac-mans now collide with each other and with tiles.  This example
@@ -13,11 +12,8 @@ import a01.Car.CarSpawnException;
  * collision between different objects/tiles.
  */
 public class Controller extends JGEngine {
-		
-//	private MyObject[] myo;
 	
 	private static final long serialVersionUID = 1L;
-//	public MyObject player;
 	private World world;
 
 	/** Application constructor. */
@@ -42,18 +38,35 @@ public class Controller extends JGEngine {
 	
 		// create some tiles. "#" is our marble tile, "." is an empty space.
 		
+		for (int i = 6; i <= 27; i += 7) {
+			for (int j = 6; j <= 27; j += 7) {
+				new JTrafficLight(i, j);
+				TrafficLightThread tlt = new TrafficLightThread(i, j);
+				Thread t = new Thread(tlt);
+				t.start();
+			}
+		}
+		
 		generateCar(Direction.north2South, 32, 6, 0);
 		generateCar(Direction.north2South, 32, 13, 0);
 		generateCar(Direction.north2South, 32, 20, 0);
-		generateCar(Direction.north2South, 32, 6, 13);
-		generateCar(Direction.north2South, 32, 13, 13);
-		generateCar(Direction.north2South, 32, 20, 13);
+		generateCar(Direction.north2South, 32, 27, 0);
+		generateCar(Direction.north2South, 32, 6, 14);
+		generateCar(Direction.north2South, 32, 13, 14);
+		generateCar(Direction.north2South, 32, 20, 14);
+		generateCar(Direction.north2South, 32, 27, 21);
 		generateCar(Direction.west2East, 32, 0, 6);
 		generateCar(Direction.west2East, 32, 0, 13);
 		generateCar(Direction.west2East, 32, 0, 20);
-		generateCar(Direction.west2East, 32, 13, 6);
-		generateCar(Direction.west2East, 32, 13, 13);
-		generateCar(Direction.west2East, 32, 13, 20);	
+		generateCar(Direction.west2East, 32, 0, 27);
+		generateCar(Direction.west2East, 32, 14, 6);
+		generateCar(Direction.west2East, 32, 14, 20);	
+		generateCar(Direction.west2East, 32, 28, 27);
+		generateCar(Direction.west2East, 32, 2, 6);
+		generateCar(Direction.west2East, 32, 18, 6);
+		
+		
+		
 		
 		for(int tx = 0; tx < (world.WIDTH+1)/7; ++tx)
 		{
@@ -64,12 +77,13 @@ public class Controller extends JGEngine {
 					ty*7, // tile y index
 					new String[] 
 					{
-						"######",
-						"#....#",
-						"#....#",
-						"#....#",
-						"#....#",
-						"######",
+						"######/",
+						"#....#/",
+						"#....#/",
+						"#....#/",
+						"#....#/",
+						"######/",
+						"!!!!!!."
 					}
 				);
 			}
@@ -84,22 +98,17 @@ public class Controller extends JGEngine {
 	}
 	
 	public void generateCar(Direction dir, double speed, int x, int y) {
-		try {
-			Car car = new Car(dir, speed, x, y);
-			GSSal.setCar(car);
-			new JCar(car);
-			CarThread tcar = new CarThread(car, this.world);
-			Thread t = new Thread(tcar);
-			t.start();
-		} catch (CarSpawnException e) {
-			e.printStackTrace();
-		}
+		Car car = new Car(dir, speed, x, y);
+		GSSal.setCar(car);
+		new JCar(car);
+		CarThread tcar = new CarThread(car, this.world);
+		Thread t = new Thread(tcar);
+		t.start();
 	}
 	
 	public void doFrame() {
 		moveObjects(null,0);
 	}
-
 	
 	class JCar extends JGObject {
 		
@@ -110,7 +119,7 @@ public class Controller extends JGEngine {
 				car.getPosition().getX() * Controller.this.world.ROXELSIZE,  // xpos
 				car.getPosition().getY() * Controller.this.world.ROXELSIZE, // ypos
 				1, //  collision ID
-				"myanim_l"// name of sprite or animation to use.
+				(car.getDir() == Direction.north2South) ? "traffic_carns" : "traffic_carwe"// name of sprite or animation to use.
 			);
 			this.car = car;
 		}
@@ -129,5 +138,47 @@ public class Controller extends JGEngine {
 
 	} /* end class MyObject */
 	
-	
+	class JTrafficLight extends JGObject {
+
+		JTrafficLight (int x, int y) {
+			super("traffic",true, // name
+				x * Controller.this.world.ROXELSIZE,  // xpos
+				y * Controller.this.world.ROXELSIZE, // ypos
+				1, //  collision ID
+				"traffic_tlns"// name of sprite or animation to use.
+			);
+			this.x = x * Controller.this.world.ROXELSIZE;
+			this.y = y * Controller.this.world.ROXELSIZE;
+		}
+		
+		public void move() {
+			try {
+				Roxel roxel = GSSal.getRoxel((int) (this.x / Controller.this.world.ROXELSIZE), (int) (this.y / Controller.this.world.ROXELSIZE));
+			
+				if (roxel.getDir() == Direction.north2South) {
+					if (roxel.isFree()) {
+						super.setGraphic("traffic_tlns");
+					} else {
+						super.setGraphic("traffic_cartlns");
+					}
+				} else {
+					if (roxel.isFree()) {
+						super.setGraphic("traffic_tlwe");
+					} else {
+						super.setGraphic("traffic_cartlwe");
+					}
+				}
+			} catch (GetRoxelException e) {
+//				e.printStackTrace();
+			}
+			
+		}
+		
+		public void hit_bg(int tilecid) {
+		}
+
+		/** Handle collision with other objects. Called by checkCollision. */
+		public void hit(JGObject obj) {
+		}
+	}
 }
