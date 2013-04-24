@@ -26,12 +26,12 @@ public class Controller extends JGEngine {
 	public Controller() {
 		initEngineApplet();
 	}
-
+	
 	public void initCanvas() {
 		// we set the background colour to same colour as the splash background
 		setCanvasSettings(world.WIDTH,world.HEIGHT,world.ROXELSIZE,world.ROXELSIZE,JGColor.black,new JGColor(255,255,255),null);
 	}
-
+		
 	public void initGame() {
 		setFrameRate(20,2);
 		defineMedia("example3.tbl");
@@ -48,6 +48,11 @@ public class Controller extends JGEngine {
 		}
 		
 		generateCar(Direction.north2South, 32, 6, 0);
+		generateCar(Direction.north2South, 32, 6, 1);
+		generateCar(Direction.north2South, 32, 6, 2);
+		generateCar(Direction.north2South, 32, 6, 3);
+		generateCar(Direction.north2South, 32, 6, 4);
+		generateCar(Direction.north2South, 32, 6, 5);
 		generateCar(Direction.north2South, 32, 13, 0);
 		generateCar(Direction.north2South, 32, 20, 0);
 		generateCar(Direction.north2South, 32, 27, 0);
@@ -99,11 +104,12 @@ public class Controller extends JGEngine {
 	
 	public void generateCar(Direction dir, double speed, int x, int y) {
 		Car car = new Car(dir, speed, x, y);
-		GSSal.setCar(car);
-		new JCar(car);
-		CarThread tcar = new CarThread(car, this.world);
-		Thread t = new Thread(tcar);
-		t.start();
+		if (GSSal.setCar(car)) {
+			new JCar(car);
+			CarThread tcar = new CarThread(car, this.world);
+			Thread t = new Thread(tcar);
+			t.start();			
+		}
 	}
 	
 	public void doFrame() {
